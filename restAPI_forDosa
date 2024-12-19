@@ -1,25 +1,137 @@
 from fastapi import FastAPI, HTTPException
+import sqlite3
+import pydantic import BaseModel
 
 class Customer(BaseModel):
     customer_id: int
     name: str
     phone: str
 
-app = FastAPI()
+class Item(BaseModel)
+    item_id: int
+    name: str
+    price: float
 
-customers = [
-    (0, "609-555-0124", "Karl"),
-    (1, "609-555-1234", "Mike"),
-    (3, "609-555-4302", "Ryan"),
-]
+class Order(BaseModel)
+    order_id: int
+    timestamp: int
+    cust_id: int
+    notes: str
+
+app = FastAPI()
+db_file = "db.sqlite"
 
 def db_setup():
-    con = sqlite3.connect("db.sqlite")
+    con = sqlite3.connect(db_file)
     return con.cursor
-    
-@app.get("/customers/{id}")
-async def customer_data(id: int):
-    for customer_id, phone, name in customers:
-        if customer_id == id:
-            return {"id": customer_id, "phone": phone, "name": name}
+
+@app.post("/customers/")
+def create_customer(customer: Customer):
+    con, cur = db_setup()
+    res = cur.execute("INSERT INTO customers (name, phone) VALUES(?, ?);", (customer.name, customer.phone))
+    customer_id = res.lastrowid
+    con.commit()
+    return {
+        "id": customer_id,
+        "name": customer.name,
+        "phone": customer.phone,
+    }
+
+@app.get("/customers/{customer_id}")
+def read_customer(customer_id: int):
+    con, cur = db_setup()
+    res = cur.execute("SELECT * FROM customers WHERE id=?;", (customer_id,))
+    row = res.fetchone()
+    if row:
+        return {
+            "id": row[0],
+            "name": row[1],
+            "phone": row[2],
+        }
     raise HTTPException(status_code=404, detail="Customer could not be found")
+
+@app.put("/customers/")
+def update_customer(customer: Customer):
+    con, cur = db_setup()
+    cur.execute("UPDATE customers SET name=?, phone=? WHERE id=?;", (customer.name, customer.phone, customer.customer_id))
+    con.commit()
+    return { "rows_affected", cur.rowcount}
+
+@app.delete("/customers/{customer_id}")
+def del_customer(customer_id: int):
+    con, cur = db_setup()
+    cur.execute("DELETE FROM customers where id=?;", (customer_id,))
+    con.commit()
+    return { "rows_affected", cur.rowcount }
+    
+@app.post("/items/")
+def create_item(item: Item):
+    con, cur = db_setup()
+    res = cur.execute("INSERT INTO items (name, price) VALUES (?, ?);", (item.name, item.price))
+    item_id = res.lastrowid
+    con.commit()
+    return {
+        "id": item_id,
+        "name": item.name,
+        "phone": item.price,
+    }
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int):
+    con, cur = db_setup()
+    res = cur.execute("SELECT * FROM items WHERE id=?;", (item_id,))
+    row = res.fetchone()
+    return {
+        "id": row[0],
+        "name:" row[1],
+        "price": row[2],
+    }
+
+@app.put("/items/")
+def update_item(item: Item):
+    con, cur = db_setup()
+    cur.execute("UPDATE items SET name=? WHERE price=?;", (item.name, item.price))
+    con.commit()
+    return { "rows_affected", cur.rowcount}
+
+@app.delete("/items/{item_id}")
+def del_item(item_id: int):
+    con, cur = db_setup()
+    cur.execute("DELETE FROM items WHERE id=?;", (item_id,))
+    con.commit()
+    return { "rows_affected", cur.rowcount}
+
+@app.post("/orders/")
+def create_order(order: Order):
+    con, cur = db_setup()
+    res = cur.execute("INSERT INTO orders (timestamp, cust_id, notes) VALUES (?, ?, ?,);", (order.timestamp, order.cust_id. order.notes))
+    order_id = res.lastrowid
+    con.commit()
+    return {
+        "id": order_id,
+        "timestamp": order.timestamp,
+        "cust_id": order.cust_id,
+        "notes": order.notes,
+    }
+
+@app.get("/orders/{order_id}")
+def read_order(order_id: int):
+    con, cur = db_setup()
+    res = cur.execute("SELECT * FROM orders WHERE id=?;", (order_id,))
+    row = res.fetchone()
+    return {
+    }
+
+@app.put("/orders/")
+def update_order(order: Order):
+    con, cur = db_setup()
+    cur.execute("UPDATE orders SET timestamp=?, cust_id=?, notes=? WHERE id=?;", (order.timestamp, order.cust_id,order.notes, order.order_id))
+    con.commit()
+    return { "rows_affected", cur.rowcount}
+
+@app.delete("/orders/{order_id}")
+def del_order(order_id: int):
+    con, cur = db_setup()
+    cur.execute("DELETE FROM orders WHERE id=?;", (order_id,))
+    con.commit()
+    return { "rows_affected", cur.rowcount}
