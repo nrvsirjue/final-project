@@ -6,6 +6,7 @@ cursor.execute("""
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS customers;
+);
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS customers(
