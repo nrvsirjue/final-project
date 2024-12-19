@@ -1,18 +1,18 @@
 from fastapi import FastAPI, HTTPException
 import sqlite3
-import pydantic import BaseModel
+from pydantic import BaseModel
 
 class Customer(BaseModel):
     customer_id: int
     name: str
     phone: str
 
-class Item(BaseModel)
+class Item(BaseModel):
     item_id: int
     name: str
     price: float
 
-class Order(BaseModel)
+class Order(BaseModel):
     order_id: int
     timestamp: int
     cust_id: int
@@ -23,7 +23,7 @@ db_file = "db.sqlite"
 
 def db_setup():
     con = sqlite3.connect(db_file)
-    return con.cursor
+    return (con, con.cursor())
 
 @app.post("/customers/")
 def create_customer(customer: Customer):
@@ -83,7 +83,7 @@ def read_item(item_id: int):
     row = res.fetchone()
     return {
         "id": row[0],
-        "name:" row[1],
+        "name": row[1],
         "price": row[2],
     }
 
@@ -120,6 +120,10 @@ def read_order(order_id: int):
     res = cur.execute("SELECT * FROM orders WHERE id=?;", (order_id,))
     row = res.fetchone()
     return {
+        "id":row[0],
+        "timestamp": row[1],
+        "cust_id": row[2],
+        "notes": row[3],
     }
 
 @app.put("/orders/")
