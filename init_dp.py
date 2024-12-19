@@ -6,7 +6,6 @@ cursor.execute("""
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS customers;
-);
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS customers(
@@ -32,8 +31,8 @@ CREATE TABLE IF NOT EXISTS orders(
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS item_list(
-    order_id NOT NULL,
-    item_id NOT NULL,
+    order_id INTEGER NOT NULL,
+    item_id INTEGER NOT NULL,
     FOREIGN KEY(order_id) REFERENCES orders(id),  
     FOREIGN KEY(item_id) REFERENCES items(id)
 );
@@ -50,9 +49,13 @@ for order in data:
 	phone = order['phone']
 	customers[phone] = name
 
+#Check if the customer already exists in the database
+ 	res = cursor.execute("SELECT id FROM customers WHERE phone = ?;", (phone,))
+    existing_customer = res.fetchone()
+
 #Insert each customer into the customers table
-for (phone, name) in customers.items():
-	cursor.execute("INSERT INTO customers (name,phone) VALUES (?,?);", (name,phone))
+	if not existing_customer:
+		cursor.execute("INSERT INTO customers (name,phone) VALUES (?,?);", (name,phone))
 
 #Go through each order item and pull out the unique items
 items = {}
