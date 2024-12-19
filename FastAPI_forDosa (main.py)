@@ -51,7 +51,7 @@ def read_customer(customer_id: int):
         }
     raise HTTPException(status_code=404, detail="Customer could not be found")
 
-@app.put("/customers/")
+@app.put("/customers/{customer_id}")
 def update_customer(customer: Customer):
     con, cur = db_setup()
     cur.execute("UPDATE customers SET name=?, phone=? WHERE id=?;", (customer.name, customer.phone, customer.customer_id))
@@ -75,7 +75,7 @@ def create_item(item: Item):
     return {
         "id": item_id,
         "name": item.name,
-        "phone": item.price,
+        "price": item.price,
     }
 
 @app.get("/items/{item_id}")
@@ -83,16 +83,18 @@ def read_item(item_id: int):
     con, cur = db_setup()
     res = cur.execute("SELECT * FROM items WHERE id=?;", (item_id,))
     row = res.fetchone()
-    return {
-        "id": row[0],
-        "name": row[1],
-        "price": row[2],
-    }
+    if row:
+        return {
+            "id": row[0],
+            "name": row[1],
+            "price": row[2],
+        }
+    raise HTTPException(status_code=404, detail="Item could not be found")
 
-@app.put("/items/")
+@app.put("/items/{item_id}")
 def update_item(item: Item):
     con, cur = db_setup()
-    cur.execute("UPDATE items SET name=? WHERE price=?;", (item.name, item.price))
+    cur.execute("UPDATE items SET name=?, price=? WHERE id=?;", (item.name, item.price, item.item_id))
     con.commit()
     return { "rows_affected", cur.rowcount}
 
@@ -107,7 +109,7 @@ def del_item(item_id: int):
 @app.post("/orders/")
 def create_order(order: Order):
     con, cur = db_setup()
-    res = cur.execute("INSERT INTO orders (timestamp, cust_id, notes) VALUES (?, ?, ?,);", (order.timestamp, order.cust_id. order.notes))
+    res = cur.execute("INSERT INTO orders (timestamp, cust_id, notes) VALUES (?, ?, ?,);", (order.timestamp, order.cust_id, order.notes))
     order_id = res.lastrowid
     con.commit()
     return {
@@ -122,14 +124,16 @@ def read_order(order_id: int):
     con, cur = db_setup()
     res = cur.execute("SELECT * FROM orders WHERE id=?;", (order_id,))
     row = res.fetchone()
-    return {
-        "id":row[0],
-        "timestamp": row[1],
-        "cust_id": row[2],
-        "notes": row[3],
-    }
+    if row:
+        return {
+            "id":row[0],
+            "timestamp": row[1],
+            "cust_id": row[2],
+            "notes": row[3],
+        }
+    raise HTTPException(status_code=404, detail="Order could not be found")
 
-@app.put("/orders/")
+@app.put("/orders/{order_id}")
 def update_order(order: Order):
     con, cur = db_setup()
     cur.execute("UPDATE orders SET timestamp=?, cust_id=?, notes=? WHERE id=?;", (order.timestamp, order.cust_id,order.notes, order.order_id))
