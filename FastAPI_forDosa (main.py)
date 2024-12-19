@@ -25,6 +25,7 @@ def db_setup():
     con = sqlite3.connect(db_file)
     return (con, con.cursor())
 
+#Customers
 @app.post("/customers/")
 def create_customer(customer: Customer):
     con, cur = db_setup()
@@ -63,7 +64,8 @@ def del_customer(customer_id: int):
     cur.execute("DELETE FROM customers where id=?;", (customer_id,))
     con.commit()
     return { "rows_affected", cur.rowcount }
-    
+
+#Items
 @app.post("/items/")
 def create_item(item: Item):
     con, cur = db_setup()
@@ -101,6 +103,7 @@ def del_item(item_id: int):
     con.commit()
     return { "rows_affected", cur.rowcount}
 
+#Orders
 @app.post("/orders/")
 def create_order(order: Order):
     con, cur = db_setup()
