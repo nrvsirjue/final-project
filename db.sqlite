@@ -1,0 +1,68 @@
+//Running  db.sqlite
+sqlite> .tables
+customers  item_list  items      orders 
+//Customers table info  
+sqlite> PRAGMA table_info(customers);
+0|id|INTEGER|0||1
+1|name|CHAR(64)|1||0
+2|phone|CHAR(10)|1||0
+  
+//Customers in db.sqlite  
+sqlite> SELECT * FROM customers;
+1|Damodhar|732-555-5509
+2|Tom|609-555-2301
+3|Kunal|609-555-5508
+4|Bhargavi|609-555-0326
+5|Shanmukhi|732-555-1919
+6|Matt|732-555-4109
+7|Mohit|732-555-0021
+8|Ryan|609-555-4030
+9|Durga|609-555-1102
+10|Dhanush|418-555-4321
+11|Bhaskara|609-555-9181
+12|Swetha|732-555-5508
+13|Devarsh|732-555-8123
+14|Thanmayi|732-555-2181
+15|Mohammad|609-555-7522
+16|Keith|609-555-3289
+17|Nimay|609-555-5509
+18|Pranit|732-555-1112
+19|Dhruvik|732-555-1813
+20|Parth|732-555-1812
+21|Rajkumar|418-555-0123
+22|Saurabh|609-555-1290
+23|Sri|609-555-6090
+24|Shivrishvith|732-555-9001
+25|Pranav|732-555-4198
+26|Venkat|609-555-4031
+27|Nirmal|732-555-2222
+28|Karthik|609-555-2000
+29|Sarathi|609-555-9189
+30|Jennifer|732-555-0124
+
+  //Table info for item_list
+sqlite> PRAGMA table_info(item_list);
+0|order_id||1||0
+1|item_id||1||0
+
+//Items
+sqlite> SELECT * FROM items;
+1|Cheese Madurai Masala Dosa|13.95
+2|Onion Chilli Masala Dosa|11.95
+3|Cheese & Onion Chilli Masala Dosa|12.95
+4|Onion Rava Mysore Masala Dosa|14.95
+5|Butter Masala Dosa|12.95
+6|Madurai Masala Dosa|12.95
+7|Sada Dosa|9.95
+8|Gun Powder Dosa|13.95
+9|Onion Chilli Rava Masala Dosa|14.95
+10|Masala Dosa|10.95
+11|Butter Mysore Masala Dosa|11.95
+12|Malgudi Onion Rava Masala Dosa|14.95
+13|Cheese Mysore Masala Dosa|13.95
+14|Ghee Roast Masala Dosa|11.95
+15|Mysore Masala Dosa|11.95
+16|Onion Rava Masala Dosa|13.95
+17|Onion Rava Sada Dosa|12.95
+18|Cheese Masala Dosa|11.95
+19|Paper Masala Dosa|11.95
