@@ -109,7 +109,7 @@ def del_item(item_id: int):
 @app.post("/orders/")
 def create_order(order: Order):
     con, cur = db_setup()
-    res = cur.execute("INSERT INTO orders (timestamp, cust_id, notes) VALUES (?, ?, ?,);", (order.timestamp, order.cust_id, order.notes))
+    res = cur.execute("INSERT INTO orders (timestamp, cust_id, notes) VALUES (?, ?, ?);", (order.timestamp, order.cust_id, order.notes))
     order_id = res.lastrowid
     con.commit()
     return {
